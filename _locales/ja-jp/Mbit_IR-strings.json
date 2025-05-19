@@ -1,0 +1,11 @@
+{
+  
+    "Mbit_IR.init|block": "IR受信機をピンに接続します %pin",
+    "Mbit_IR.onPressEvent|block": "ボタン |%btn| が押されたとき",
+    "makerbit.connectIrReceiver|block": "IR受信機をピンに接続します %pin",
+    "makerbit.onIrButton|block": "ボタン設定 | %button | %action",
+	"IrButtonAction.Pressed|block": "押した",
+	"IrButtonAction.Released|block": "離した"
+
+  }
+  
