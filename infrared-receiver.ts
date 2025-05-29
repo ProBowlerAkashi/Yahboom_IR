@@ -170,13 +170,13 @@ namespace makerbit {
       if (newCommand !== irState.activeCommand) {
 
         if (irState.activeCommand >= 0) {
-          const releasedHandler = irState.onIrButtonReleased.find(h => h.irButton === irState.activeCommand || IrButton.Any === h.irButton);
+          const releasedHandler = arrayFind(irState.onIrButtonReleased, (h: any) => h.irButton === irState.activeCommand || IrButton.Any === h.irButton);
           if (releasedHandler) {
             background.schedule(releasedHandler.onEvent, background.Thread.UserCallback, background.Mode.Once, 0);
           }
         }
 
-        const pressedHandler = irState.onIrButtonPressed.find(h => h.irButton === newCommand || IrButton.Any === h.irButton);
+        const pressedHandler = arrayFind(irState.onIrButtonPressed, (h: any) => h.irButton === newCommand || IrButton.Any === h.irButton);
         if (pressedHandler) {
           background.schedule(pressedHandler.onEvent, background.Thread.UserCallback, background.Mode.Once, 0);
         }
@@ -187,24 +187,22 @@ namespace makerbit {
   }
 
   function initIrState() {
-    if (irState) {
-      return;
+    if (!irState) {
+      irState = {
+        protocol: IrProtocol.Keyestudio,
+        hasNewDatagram: false,
+        bitsReceived: 0,
+        addressSectionBits: 0,
+        commandSectionBits: 0,
+        hiword: 0,
+        loword: 0,
+        activeCommand: 0,
+        repeatTimeout: 0,
+        onIrButtonPressed: [],
+        onIrButtonReleased: [],
+        onIrDatagram: () => {}
+      };
     }
-
-    irState = {
-      protocol: undefined,
-      bitsReceived: 0,
-      hasNewDatagram: false,
-      addressSectionBits: 0,
-      commandSectionBits: 0,
-      hiword: 0, // TODO replace with uint32
-      loword: 0,
-      activeCommand: -1,
-      repeatTimeout: 0,
-      onIrButtonPressed: [],
-      onIrButtonReleased: [],
-      onIrDatagram: undefined,
-    };
   }
 
   //% blockId="makerbit_infrared_connect_receiver"
@@ -232,7 +230,7 @@ namespace makerbit {
       if (now > irState.repeatTimeout) {
         // repeat timed out
 
-        const handler = irState.onIrButtonReleased.find(h => h.irButton === irState.activeCommand || IrButton.Any === h.irButton);
+        const handler = arrayFind(irState.onIrButtonReleased, (h: any) => h.irButton === irState.activeCommand || IrButton.Any === h.irButton);
         if (handler) {
           background.schedule(handler.onEvent, background.Thread.UserCallback, background.Mode.Once, 0);
         }
@@ -262,6 +260,19 @@ namespace makerbit {
     }
   }
 
+}
+
+// Array.prototype.find の代替（ES5互換）
+function arrayFind<T>(arr: T[], predicate: (value: T) => boolean): T | undefined {
+  for (let i = 0; i < arr.length; i++) {
+    if (predicate(arr[i])) return arr[i];
+  }
+  return undefined;
+}
+
+// Array.prototype.removeAt の代替（ES5互換）
+function arrayRemoveAt<T>(arr: T[], index: number): void {
+  arr.splice(index, 1);
 }
 
 namespace makerbit {
@@ -324,7 +335,7 @@ namespace makerbit {
                         for (let i = _jobs.length - 1; i >= 0; i--) {
                             const job = _jobs[i];
                             if (job.id == jobId) {
-                                _jobs.removeAt(i);
+                                _jobs.splice(i, 1);
                                 break;
                             }
                         }
