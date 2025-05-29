@@ -18,7 +18,9 @@
         "_locales/zh-cn/Mbit_IR-strings.json",
         "_locales/zh-cn/Mbit_IR-jsdoc-strings.json",
         "_locales/zh-tw/Mbit_IR-strings.json",
-        "_locales/zh-tw/Mbit_IR-jsdoc-strings.json"
+        "_locales/zh-tw/Mbit_IR-jsdoc-strings.json",
+        "_locales/ja-jp/Mbit_IR-strings.json",
+        "_locales/ja-jp/Mbit_IR-jsdoc-strings.json"
     ],
     "testFiles": [
         "test.ts"
